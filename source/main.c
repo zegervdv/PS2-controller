@@ -16,10 +16,14 @@ volatile uint16_t sample_value[4] = {0};
 void init_ADC(void);
 void init_USART(void);
 void USART_Write(uint8_t* data, uint8_t size);
+void Delay(__IO uint32_t);
 
 int main(int argc, char const* argv[])
 {
-  uint32_t i = 0;
+  // Initialize SysTick
+  RCC_ClocksTypeDef RCC_Clocks;
+  RCC_GetClocksFreq(&RCC_Clocks);
+  SysTick_Config(RCC_Clocks.HCLK_Frequency / 1000);
   STM_EVAL_LEDInit(LED3); 
   STM_EVAL_LEDInit(LED4); 
   STM_EVAL_LEDInit(LED5); 
@@ -51,9 +55,7 @@ int main(int argc, char const* argv[])
     }
 
     USART_Write((uint8_t*)sample_value, 2);
-    while(i < 100000)
-      i++;
-    i = 0;
+    Delay(100);
   }
 
   return 0;
@@ -167,3 +169,4 @@ void USART_Write(uint8_t* data, uint8_t size) {
     USART_SendData(USART1, *data++);
   }
 }
+

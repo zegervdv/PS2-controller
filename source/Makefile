@@ -2,7 +2,7 @@
 # STLINK=~/stlink.git
 
 # Put your source files here (or *.c, etc)
-SRCS = main.c system_stm32f0xx.c stm32f072b_discovery.c
+SRCS = main.c system_stm32f0xx.c stm32f072b_discovery.c stm32f072b_it.c
 SRCS += stm32f0xx_gpio.c stm32f0xx_rcc.c stm32f0xx_exti.c stm32f0xx_syscfg.c stm32f0xx_usart.c stm32f0xx_rtc.c stm32f0xx_misc.c stm32f0xx_adc.c stm32f0xx_dma.c stm32f0xx_tim.c
 
 # Binaries will be generated with this name (.elf, .bin, .hex, etc)
