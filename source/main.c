@@ -6,23 +6,27 @@
 #define ADC_L_Y  (uint8_t)(2) //PA4
 #define ADC_L_X  (uint8_t)(3) //PA5
 ADC_InitTypeDef ADC_InitStructure;
-GPIO_InitTypeDef GPIO_InitStructure;
 DMA_InitTypeDef DMA_InitStructure;
 TIM_TimeBaseInitTypeDef TIM_TimeBaseStructure;
 TIM_OCInitTypeDef TIM_OCInitStructure;
+USART_InitTypeDef USART_InitStructure;
 
 volatile uint16_t sample_value[4] = {0};
 
 void init_ADC(void);
+void init_USART(void);
+void USART_Write(uint8_t* data, uint8_t size);
 
 int main(int argc, char const* argv[])
 {
+  uint32_t i = 0;
   STM_EVAL_LEDInit(LED3); 
   STM_EVAL_LEDInit(LED4); 
   STM_EVAL_LEDInit(LED5); 
   STM_EVAL_LEDInit(LED6); 
 
   init_ADC();
+  init_USART();
  
   while(1) {
     if (sample_value[ADC_R_Y] > 0x0900){
@@ -45,12 +49,18 @@ int main(int argc, char const* argv[])
     }else{
       STM_EVAL_LEDOff(LED4);
     }
+
+    USART_Write((uint8_t*)sample_value, 2);
+    while(i < 100000)
+      i++;
+    i = 0;
   }
 
   return 0;
 }
 
 void init_ADC() {
+  GPIO_InitTypeDef GPIO_InitStructure;
   ADC_DeInit(ADC1);
 
   RCC_AHBPeriphClockCmd(RCC_AHBPeriph_GPIOA, ENABLE);
@@ -125,4 +135,35 @@ void init_ADC() {
   ADC_Cmd(ADC1, ENABLE);
   while(!ADC_GetFlagStatus(ADC1, ADC_FLAG_ADEN));
   ADC_StartOfConversion(ADC1);
+}
+
+void init_USART() {
+  RCC_APB2PeriphClockCmd(RCC_APB2Periph_USART1, ENABLE);
+  GPIO_InitTypeDef GPIO_InitStructure;
+  GPIO_InitStructure.GPIO_Pin = GPIO_Pin_9 | GPIO_Pin_10;
+  GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF;
+  GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
+  GPIO_InitStructure.GPIO_OType = GPIO_OType_PP;
+  GPIO_InitStructure.GPIO_PuPd = GPIO_PuPd_DOWN;
+  GPIO_Init(GPIOA, &GPIO_InitStructure);
+  
+  GPIO_PinAFConfig(GPIOA, GPIO_PinSource9, GPIO_AF_1);
+  GPIO_PinAFConfig(GPIOA, GPIO_PinSource10, GPIO_AF_1);
+
+  USART_InitStructure.USART_BaudRate = 115200;
+  USART_InitStructure.USART_WordLength = USART_WordLength_8b;
+  USART_InitStructure.USART_StopBits = USART_StopBits_1;
+  USART_InitStructure.USART_Parity = USART_Parity_No;
+  USART_InitStructure.USART_HardwareFlowControl = USART_HardwareFlowControl_None;
+  USART_InitStructure.USART_Mode = USART_Mode_Tx | USART_Mode_Rx;
+  USART_Init(USART1, &USART_InitStructure);
+  USART_Cmd(USART1, ENABLE);
+}
+
+void USART_Write(uint8_t* data, uint8_t size) {
+  int i = 0;
+  for(i = 0; i < size; i++) { 
+    while(USART_GetFlagStatus(USART1, USART_FLAG_TC) == RESET);
+    USART_SendData(USART1, *data++);
+  }
 }
