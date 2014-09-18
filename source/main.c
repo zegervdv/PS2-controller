@@ -10,7 +10,10 @@ GPIO_InitTypeDef GPIO_InitStructure;
 DMA_InitTypeDef DMA_InitStructure;
 TIM_TimeBaseInitTypeDef TIM_TimeBaseStructure;
 TIM_OCInitTypeDef TIM_OCInitStructure;
+
 volatile uint16_t sample_value[4] = {0};
+
+void init_ADC(void);
 
 int main(int argc, char const* argv[])
 {
@@ -19,6 +22,35 @@ int main(int argc, char const* argv[])
   STM_EVAL_LEDInit(LED5); 
   STM_EVAL_LEDInit(LED6); 
 
+  init_ADC();
+ 
+  while(1) {
+    if (sample_value[ADC_R_Y] > 0x0900){
+      STM_EVAL_LEDOn(LED3);
+    } else {
+      STM_EVAL_LEDOff(LED3);
+    }
+    if (sample_value[ADC_R_X] > 0x0900){
+      STM_EVAL_LEDOn(LED5);
+    }else {
+      STM_EVAL_LEDOff(LED5);
+    }
+    if (sample_value[ADC_L_Y] > 0x0900) {
+      STM_EVAL_LEDOn(LED6);
+    }else{
+      STM_EVAL_LEDOff(LED6);
+    }
+    if (sample_value[ADC_L_X] > 0x0900) {
+      STM_EVAL_LEDOn(LED4);
+    }else{
+      STM_EVAL_LEDOff(LED4);
+    }
+  }
+
+  return 0;
+}
+
+void init_ADC() {
   ADC_DeInit(ADC1);
 
   RCC_AHBPeriphClockCmd(RCC_AHBPeriph_GPIOA, ENABLE);
@@ -93,30 +125,4 @@ int main(int argc, char const* argv[])
   ADC_Cmd(ADC1, ENABLE);
   while(!ADC_GetFlagStatus(ADC1, ADC_FLAG_ADEN));
   ADC_StartOfConversion(ADC1);
-
- 
-  while(1) {
-    if (sample_value[ADC_R_Y] > 0x0900){
-      STM_EVAL_LEDOn(LED3);
-    } else {
-      STM_EVAL_LEDOff(LED3);
-    }
-    if (sample_value[ADC_R_X] > 0x0900){
-      STM_EVAL_LEDOn(LED5);
-    }else {
-      STM_EVAL_LEDOff(LED5);
-    }
-    if (sample_value[ADC_L_Y] > 0x0900) {
-      STM_EVAL_LEDOn(LED6);
-    }else{
-      STM_EVAL_LEDOff(LED6);
-    }
-    if (sample_value[ADC_L_X] > 0x0900) {
-      STM_EVAL_LEDOn(LED4);
-    }else{
-      STM_EVAL_LEDOff(LED4);
-    }
-  }
-
-  return 0;
 }
