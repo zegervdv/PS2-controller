@@ -40,7 +40,11 @@ int main(int argc, char const* argv[])
   STM_EVAL_LEDInit(LED6); 
 
   init_ADC();
+<<<<<<< HEAD
   /* init_USART(); */
+=======
+  init_USART();
+>>>>>>> Add HID template
 
   USBD_Init(&USB_Device_dev, &USR_desc, &USBD_HID_cb, &USR_cb);
  
