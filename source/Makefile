@@ -3,7 +3,9 @@
 
 # Put your source files here (or *.c, etc)
 SRCS = main.c system_stm32f0xx.c stm32f072b_discovery.c stm32f072b_it.c
-SRCS += stm32f0xx_gpio.c stm32f0xx_rcc.c stm32f0xx_exti.c stm32f0xx_syscfg.c stm32f0xx_usart.c stm32f0xx_rtc.c stm32f0xx_misc.c stm32f0xx_adc.c stm32f0xx_dma.c stm32f0xx_tim.c
+SRCS += usb_bsp.c usbd_custom_hid_core.c usbd_desc.c usbd_pwr.c usbd_usr.c
+SRCS += stm32f0xx_gpio.c stm32f0xx_rcc.c stm32f0xx_exti.c stm32f0xx_syscfg.c stm32f0xx_usart.c stm32f0xx_rtc.c stm32f0xx_misc.c stm32f0xx_adc.c stm32f0xx_dma.c stm32f0xx_tim.c stm32f0xx_crs.c
+SRCS += usb_dcd_int.c usb_dcd.c usbd_ioreq.c usbd_req.c usb_core.c usbd_core.c
 
 # Binaries will be generated with this name (.elf, .bin, .hex, etc)
 PROJ_NAME=controller
@@ -28,6 +30,7 @@ CFLAGS += -I.
 CFLAGS += -fno-strict-aliasing
 CFLAGS += -DUSE_STDPERIPH_DRIVER
 CFLAGS += -DSTM32F072xB
+CFLAGS += -DINTERNAL_PULLUP
 
 # CFLAGS += -L/usr/arm-none-eabi/lib/thumb/cortex-m4/float-abi-hard/fpuv4-sp-d16
 CFLAGS += --specs=nosys.specs
@@ -38,12 +41,17 @@ vpath %.c \
 			$(STM_COMMON)/Libraries/STM32F0xx_StdPeriph_Driver/src \
 			$(STM_COMMON)/Libraries/CMSIS/Device/Source/Templates \
 			$(STM_COMMON)/Utilities/STM32F072B-Discovery \
+			$(STM_COMMON)/libraries/STM32_USB_Device_Library/Core/src \
+			$(STM_COMMON)/libraries/STM32_USB_Device_Driver/src \
 			$(COMMON_SRC)	
 
 # Include files from STM libraries
 CFLAGS += -I$(STM_COMMON)/Utilities/STM32F072B-Discovery
 CFLAGS += -I$(STM_COMMON)/Libraries/CMSIS/Include -I$(STM_COMMON)/Libraries/CMSIS/Device/Include
 CFLAGS += -I$(STM_COMMON)/Libraries/STM32F0xx_StdPeriph_Driver/inc
+CFLAGS += -I$(STM_COMMON)/Libraries/STM32_USB_Device_Library/Core/inc
+CFLAGS += -I$(STM_COMMON)/Libraries/STM32_USB_Device_Driver/inc
+CFLAGS += -I$(STM_COMMON)/Libraries/STM32_USB_Device_Library/Class/hid/inc
 CFLAGS += -I$(COMMON_SRC)
 
 # add startup file to build

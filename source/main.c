@@ -1,5 +1,9 @@
 #include "stm32f0xx_conf.h"
 #include "stm32f072b_discovery.h"
+#include "usbd_hid_core.h"
+#include "usbd_usr.h"
+#include "usbd_desc.h"
+#include "usbd_custom_hid_core.h"
 
 #define ADC_R_Y  (uint8_t)(0) //PA0
 #define ADC_R_X  (uint8_t)(1) //PA1
@@ -12,6 +16,10 @@ TIM_OCInitTypeDef TIM_OCInitStructure;
 USART_InitTypeDef USART_InitStructure;
 
 volatile uint16_t sample_value[4] = {0};
+
+uint8_t Send_Buffer[2];
+uint8_t PrevXferDone = 1;
+USB_CORE_HANDLE  USB_Device_dev;
 
 void init_ADC(void);
 void init_USART(void);
@@ -31,6 +39,8 @@ int main(int argc, char const* argv[])
 
   init_ADC();
   init_USART();
+
+  USBD_Init(&USB_Device_dev, &USR_desc, &USBD_HID_cb, &USR_cb);
  
   while(1) {
     if (sample_value[ADC_R_Y] > 0x0900){
