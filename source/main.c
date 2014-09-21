@@ -4,11 +4,13 @@
 #include "usbd_usr.h"
 #include "usbd_desc.h"
 #include "usbd_custom_hid_core.h"
+#include <string.h>
 
 #define ADC_R_Y  (uint8_t)(0) //PA0
 #define ADC_R_X  (uint8_t)(1) //PA1
 #define ADC_L_Y  (uint8_t)(2) //PA4
 #define ADC_L_X  (uint8_t)(3) //PA5
+#define USB_BUFFER (int)(4 * sizeof(uint16_t))
 ADC_InitTypeDef ADC_InitStructure;
 DMA_InitTypeDef DMA_InitStructure;
 TIM_TimeBaseInitTypeDef TIM_TimeBaseStructure;
@@ -17,7 +19,7 @@ USART_InitTypeDef USART_InitStructure;
 
 volatile uint16_t sample_value[4] = {0};
 
-uint8_t Send_Buffer[2];
+uint8_t Send_Buffer[USB_BUFFER];
 uint8_t PrevXferDone = 1;
 USB_CORE_HANDLE  USB_Device_dev;
 
@@ -38,7 +40,7 @@ int main(int argc, char const* argv[])
   STM_EVAL_LEDInit(LED6); 
 
   init_ADC();
-  init_USART();
+  /* init_USART(); */
 
   USBD_Init(&USB_Device_dev, &USR_desc, &USBD_HID_cb, &USR_cb);
  
@@ -64,7 +66,13 @@ int main(int argc, char const* argv[])
       STM_EVAL_LEDOff(LED4);
     }
 
-    USART_Write((uint8_t*)sample_value, 2);
+    if ((PrevXferDone) && (USB_Device_dev.dev.device_status == USB_CONFIGURED)) {
+      memcpy(Send_Buffer, (uint16_t*)sample_value, USB_BUFFER);
+      USBD_HID_SendReport(&USB_Device_dev, Send_Buffer, USB_BUFFER);
+      PrevXferDone = 0;
+    }
+
+    /* USART_Write((uint8_t*)sample_value, 2); */
     Delay(100);
   }
 

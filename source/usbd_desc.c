@@ -50,7 +50,7 @@ static void IntToUnicode (uint32_t value , uint8_t *pbuf , uint8_t len);
   * @{
   */ 
 
-#define USBD_VID                     0x0483
+#define USBD_VID                     0x0400
 #define USBD_PID                     0x5750
 
 #define USBD_LANGID_STRING            0x409
