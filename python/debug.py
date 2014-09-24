@@ -14,7 +14,7 @@ try:
 
     print "Manufacturer: %s" % h.get_manufacturer_string()
     while True:
-        data = h.read(8)
+        data = h.read(5)
         print data
         time.sleep(0.05)
 except IOError, ex:

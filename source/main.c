@@ -10,7 +10,8 @@
 #define ADC_R_X  (uint8_t)(1) //PA1
 #define ADC_L_Y  (uint8_t)(2) //PA4
 #define ADC_L_X  (uint8_t)(3) //PA5
-#define USB_BUFFER (int)(4 * sizeof(uint16_t))
+#define USB_BUFFER (int)(5)
+
 ADC_InitTypeDef ADC_InitStructure;
 DMA_InitTypeDef DMA_InitStructure;
 TIM_TimeBaseInitTypeDef TIM_TimeBaseStructure;
@@ -22,6 +23,14 @@ volatile uint16_t sample_value[4] = {0};
 uint8_t Send_Buffer[USB_BUFFER];
 uint8_t PrevXferDone = 1;
 USB_CORE_HANDLE  USB_Device_dev;
+
+typedef struct controller {
+  int8_t R_y;
+  int8_t R_x;
+  int8_t L_y;
+  int8_t L_x;
+  uint8_t buttons;
+};
 
 void init_ADC(void);
 void init_USART(void);
@@ -71,7 +80,12 @@ int main(int argc, char const* argv[])
     }
 
     if ((PrevXferDone) && (USB_Device_dev.dev.device_status == USB_CONFIGURED)) {
-      memcpy(Send_Buffer, (uint16_t*)sample_value, USB_BUFFER);
+      /* memcpy(Send_Buffer, (uint16_t*)sample_value, USB_BUFFER); */
+      Send_Buffer[0] = 0x10;
+      Send_Buffer[1] = 0x20;
+      Send_Buffer[2] = 0x30;
+      Send_Buffer[3] = 0x40;
+      Send_Buffer[4] = 0x50;
       USBD_HID_SendReport(&USB_Device_dev, Send_Buffer, USB_BUFFER);
       PrevXferDone = 0;
     }
