@@ -99,9 +99,9 @@ void USB_BSP_Init(USB_CORE_HANDLE *pdev)
   
   /* Enable USB clock */
   RCC_APB1PeriphClockCmd(RCC_APB1Periph_USB, ENABLE);
-  
+/*    */
 #if defined USB_CLOCK_SOURCE_CRS
-  
+
   /*For using CRS, you need to do the following:
   - Enable HSI48
   - Enable CRS clock
@@ -111,41 +111,41 @@ void USB_BSP_Init(USB_CORE_HANDLE *pdev)
 
   /* Enable HSI48 oscillator */
   RCC_HSI48Cmd(ENABLE);
-  
+
   /* Wait till HSI48RDYF is set */
   while(RCC_GetFlagStatus(RCC_FLAG_HSI48RDY) == RESET)
   {
   }
-  
+
   /* Select HSI48 as USB clock */
   RCC_USBCLKConfig(RCC_USBCLK_HSI48);
-  
+
   /* Configure the Clock Recovery System */
   CRS_Config();
-  
+
 #else 
   /* Configure USBCLK from system clock (Warning: PLL clock should be 48MHz from HSE!! ) */
   RCC_USBCLKConfig(RCC_USBCLK_PLLCLK); 
 #endif /*USB_CLOCK_SOURCE_CRS */ 
-  
-  /* Configure the User button in EXTI mode */
-  STM_EVAL_PBInit(BUTTON_USER, BUTTON_MODE_EXTI);
-  
-  /* Configure User EXTI line to generate an interrupt on rising & falling edges */ 
-  EXTI_InitStructure.EXTI_Line = USER_BUTTON_EXTI_LINE;
-  EXTI_InitStructure.EXTI_Mode = EXTI_Mode_Interrupt;
-  EXTI_InitStructure.EXTI_Trigger = EXTI_Trigger_Rising_Falling;
-  EXTI_InitStructure.EXTI_LineCmd = ENABLE;
-  EXTI_Init(&EXTI_InitStructure);
-  
-  /* Clear the User EXTI line pending bit */
-  EXTI_ClearITPendingBit(USER_BUTTON_EXTI_LINE);
-  
+/*    */
+/*   #<{(| Configure the User button in EXTI mode |)}># */
+/*   STM_EVAL_PBInit(BUTTON_USER, BUTTON_MODE_EXTI); */
+/*    */
+/*   #<{(| Configure User EXTI line to generate an interrupt on rising & falling edges |)}>#  */
+/*   EXTI_InitStructure.EXTI_Line = USER_BUTTON_EXTI_LINE; */
+/*   EXTI_InitStructure.EXTI_Mode = EXTI_Mode_Interrupt; */
+/*   EXTI_InitStructure.EXTI_Trigger = EXTI_Trigger_Rising_Falling; */
+/*   EXTI_InitStructure.EXTI_LineCmd = ENABLE; */
+/*   EXTI_Init(&EXTI_InitStructure); */
+/*    */
+/*   #<{(| Clear the User EXTI line pending bit |)}># */
+/*   EXTI_ClearITPendingBit(USER_BUTTON_EXTI_LINE); */
+/*    */
 #ifdef USB_DEVICE_LOW_PWR_MGMT_SUPPORT  
-  
+
   /* Enable the PWR clock */
   RCC_APB1PeriphClockCmd(RCC_APB1Periph_PWR, ENABLE);
-  
+
   /* EXTI line 18 is connected to the USB Wakeup from suspend event   */
   EXTI_ClearITPendingBit(EXTI_Line18);
   EXTI_InitStructure.EXTI_Line = EXTI_Line18; 

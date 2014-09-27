@@ -6,10 +6,10 @@
 #include "usbd_custom_hid_core.h"
 #include <string.h>
 
-#define ADC_R_Y  (uint8_t)(0) //PA0
-#define ADC_R_X  (uint8_t)(1) //PA1
-#define ADC_L_Y  (uint8_t)(2) //PA4
-#define ADC_L_X  (uint8_t)(3) //PA5
+#define ADC_R_Y  (0) //PA1
+#define ADC_R_X  (1) //PA2
+#define ADC_L_Y  (2) //PA4
+#define ADC_L_X  (3) //PA5
 #define USB_BUFFER (int)(5)
 
 ADC_InitTypeDef ADC_InitStructure;
@@ -18,19 +18,11 @@ TIM_TimeBaseInitTypeDef TIM_TimeBaseStructure;
 TIM_OCInitTypeDef TIM_OCInitStructure;
 USART_InitTypeDef USART_InitStructure;
 
-volatile uint16_t sample_value[4] = {0};
+volatile uint8_t sample_value[4] = {0};
 
 uint8_t Send_Buffer[USB_BUFFER];
 uint8_t PrevXferDone = 1;
 USB_CORE_HANDLE  USB_Device_dev;
-
-typedef struct controller {
-  int8_t R_y;
-  int8_t R_x;
-  int8_t L_y;
-  int8_t L_x;
-  uint8_t buttons;
-};
 
 void init_ADC(void);
 void init_USART(void);
@@ -49,43 +41,40 @@ int main(int argc, char const* argv[])
   STM_EVAL_LEDInit(LED6); 
 
   init_ADC();
-<<<<<<< HEAD
-  /* init_USART(); */
-=======
   init_USART();
->>>>>>> Add HID template
 
   USBD_Init(&USB_Device_dev, &USR_desc, &USBD_HID_cb, &USR_cb);
- 
+  init_ADC();
   while(1) {
-    if (sample_value[ADC_R_Y] > 0x0900){
+    if (sample_value[ADC_R_Y] > 0x90){
       STM_EVAL_LEDOn(LED3);
     } else {
       STM_EVAL_LEDOff(LED3);
     }
-    if (sample_value[ADC_R_X] > 0x0900){
+    if (sample_value[ADC_R_X] > 0x90){
       STM_EVAL_LEDOn(LED5);
     }else {
       STM_EVAL_LEDOff(LED5);
     }
-    if (sample_value[ADC_L_Y] > 0x0900) {
+    if (sample_value[ADC_L_Y] > 0x90) {
       STM_EVAL_LEDOn(LED6);
     }else{
       STM_EVAL_LEDOff(LED6);
     }
-    if (sample_value[ADC_L_X] > 0x0900) {
+    if (sample_value[ADC_L_X] > 0x90) {
       STM_EVAL_LEDOn(LED4);
     }else{
       STM_EVAL_LEDOff(LED4);
     }
 
     if ((PrevXferDone) && (USB_Device_dev.dev.device_status == USB_CONFIGURED)) {
-      /* memcpy(Send_Buffer, (uint16_t*)sample_value, USB_BUFFER); */
-      Send_Buffer[0] = 0x10;
-      Send_Buffer[1] = 0x20;
-      Send_Buffer[2] = 0x30;
-      Send_Buffer[3] = 0x40;
-      Send_Buffer[4] = 0x50;
+      Send_Buffer[0] = sample_value[0];
+      Send_Buffer[1] = sample_value[1];
+      Send_Buffer[2] = sample_value[2];
+      Send_Buffer[3] = sample_value[3];
+
+      Send_Buffer[USB_BUFFER - 1] = 0x00;
+
       USBD_HID_SendReport(&USB_Device_dev, Send_Buffer, USB_BUFFER);
       PrevXferDone = 0;
     }
@@ -102,14 +91,18 @@ void init_ADC() {
   ADC_DeInit(ADC1);
 
   RCC_AHBPeriphClockCmd(RCC_AHBPeriph_GPIOA, ENABLE);
+  RCC_AHBPeriphClockCmd(RCC_AHBPeriph_GPIOC, ENABLE);
   RCC_APB2PeriphClockCmd(RCC_APB2Periph_TIM1, ENABLE);
   RCC_APB2PeriphClockCmd(RCC_APB2Periph_ADC1, ENABLE);
   RCC_AHBPeriphClockCmd(RCC_AHBPeriph_DMA1, ENABLE);
 
-  GPIO_InitStructure.GPIO_Pin = GPIO_Pin_0 | GPIO_Pin_1 | GPIO_Pin_4 | GPIO_Pin_5;
+  GPIO_InitStructure.GPIO_Pin = GPIO_Pin_1 | GPIO_Pin_4;
   GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AN;
   GPIO_InitStructure.GPIO_PuPd = GPIO_PuPd_NOPULL;
   GPIO_Init(GPIOA, &GPIO_InitStructure);
+
+  GPIO_InitStructure.GPIO_Pin = GPIO_Pin_3 | GPIO_Pin_4;
+  GPIO_Init(GPIOC, &GPIO_InitStructure);
 
   TIM_DeInit(TIM1);
 
@@ -142,8 +135,8 @@ void init_ADC() {
   DMA_InitStructure.DMA_BufferSize = 4;
   DMA_InitStructure.DMA_PeripheralInc = DMA_PeripheralInc_Disable;
   DMA_InitStructure.DMA_MemoryInc = DMA_MemoryInc_Enable;
-  DMA_InitStructure.DMA_PeripheralDataSize = DMA_PeripheralDataSize_HalfWord;
-  DMA_InitStructure.DMA_MemoryDataSize = DMA_MemoryDataSize_HalfWord;
+  DMA_InitStructure.DMA_PeripheralDataSize = DMA_PeripheralDataSize_Byte;
+  DMA_InitStructure.DMA_MemoryDataSize = DMA_MemoryDataSize_Byte;
   DMA_InitStructure.DMA_Mode = DMA_Mode_Circular;
   DMA_InitStructure.DMA_Priority = DMA_Priority_High;
   DMA_InitStructure.DMA_M2M = DMA_M2M_Disable;
@@ -153,7 +146,7 @@ void init_ADC() {
 
   ADC_StructInit(&ADC_InitStructure);
 
-  ADC_InitStructure.ADC_Resolution = ADC_Resolution_12b;
+  ADC_InitStructure.ADC_Resolution = ADC_Resolution_8b;
   ADC_InitStructure.ADC_ContinuousConvMode = DISABLE;
   ADC_InitStructure.ADC_ExternalTrigConvEdge = ADC_ExternalTrigConvEdge_Rising;
   ADC_InitStructure.ADC_ExternalTrigConv = ADC_ExternalTrigConv_T1_CC4;
@@ -161,10 +154,10 @@ void init_ADC() {
   ADC_InitStructure.ADC_ScanDirection = ADC_ScanDirection_Upward;
   ADC_Init(ADC1, &ADC_InitStructure);
 
-  ADC_ChannelConfig(ADC1, ADC_Channel_0, ADC_SampleTime_7_5Cycles);
   ADC_ChannelConfig(ADC1, ADC_Channel_1, ADC_SampleTime_7_5Cycles);
   ADC_ChannelConfig(ADC1, ADC_Channel_4, ADC_SampleTime_7_5Cycles);
-  ADC_ChannelConfig(ADC1, ADC_Channel_5, ADC_SampleTime_7_5Cycles);
+  ADC_ChannelConfig(ADC1, ADC_Channel_13, ADC_SampleTime_7_5Cycles);
+  ADC_ChannelConfig(ADC1, ADC_Channel_14, ADC_SampleTime_7_5Cycles);
 
   ADC_GetCalibrationFactor(ADC1);
 

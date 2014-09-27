@@ -170,7 +170,7 @@ const uint8_t CustomHID_ReportDescriptor[CUSTOMHID_SIZ_REPORT_DESC] =
   0xA0,         //Collection (Physical)
   0x14,         //Logical Minimum (0)
   0x25, 0xFF,   //Logical Maximum (255)
-  0x75, 0x0C,   //Report Size (12)
+  0x75, 0x08,   //Report Size (8)
   0x95, 0x04,   //Report Count (4)
   0x09, 0x34,   //Usage (Ry)
   0x09, 0x33,   //Usage (Rx)

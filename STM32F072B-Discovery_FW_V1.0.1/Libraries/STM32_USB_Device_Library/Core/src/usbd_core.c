@@ -77,24 +77,24 @@ void USBD_Init(USB_CORE_HANDLE *pdev,
   USB_BSP_Init(pdev);  
   
   USBD_DeInit(pdev);
-  
+
   /*Register class and user callbacks */
   pdev->dev.class_cb = class_cb;
   pdev->dev.usr_cb = usr_cb;  
   pdev->dev.usr_device = pDevice;    
-  
+
   /* Update the serial number string descriptor with the data from the unique ID*/
   Get_SerialNum();
-  
+
   /* set USB DEVICE core params */
   DCD_Init(pdev);
-  
+
   /* Upon Init call usr callback */
   pdev->dev.usr_cb->Init();
-  
+
   /* Enable Interrupts */
   USB_BSP_EnableInterrupt(pdev);
-  
+
   /* Enable the pull-up */
 #ifdef INTERNAL_PULLUP
   DCD_DevConnect(pdev);
