@@ -34,8 +34,14 @@ CFLAGS += -DINTERNAL_PULLUP
 
 # CFLAGS += -L/usr/arm-none-eabi/lib/thumb/cortex-m4/float-abi-hard/fpuv4-sp-d16
 CFLAGS += --specs=nosys.specs
-# LIBS += /usr/arm-none-eabi/lib/thumb/cortex-m4/float-abi-hard/fpuv4-sp-d16/libc.a /usr/arm-none-eabi/lib/thumb/cortex-m4/float-abi-hard/fpuv4-sp-d16/libm.a
-LIBS += /usr/arm-none-eabi/lib/thumb/cortex-m0/libm.a /usr/arm-none-eabi/lib/thumb/cortex-m0/libc.a
+UNAME_S := $(shell uname -s)
+ifeq ($(UNAME_S),Darwin)
+	LIBS += /usr/local/Cellar/arm-none-eabi-gcc/20140609/arm-none-eabi/lib/armv6-m/libm.a /usr/local/Cellar/arm-none-eabi-gcc/20140609/arm-none-eabi/lib/armv6-m/libc.a
+else
+	# LIBS += /usr/arm-none-eabi/lib/thumb/cortex-m4/float-abi-hard/fpuv4-sp-d16/libc.a /usr/arm-none-eabi/lib/thumb/cortex-m4/float-abi-hard/fpuv4-sp-d16/libm.a
+	LIBS += /usr/arm-none-eabi/lib/thumb/cortex-m0/libm.a /usr/arm-none-eabi/lib/thumb/cortex-m0/libc.a
+endif
+
 
 vpath %.c \
 			$(STM_COMMON)/Libraries/STM32F0xx_StdPeriph_Driver/src \
