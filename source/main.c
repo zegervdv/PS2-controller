@@ -31,6 +31,9 @@ void Delay(__IO uint32_t);
 
 int main(int argc, char const* argv[])
 {
+  float values[4] = {0};
+  uint8_t ind = 0;
+  uint8_t end = (uint8_t)('\n');
   // Initialize SysTick
   RCC_ClocksTypeDef RCC_Clocks;
   RCC_GetClocksFreq(&RCC_Clocks);
@@ -43,8 +46,9 @@ int main(int argc, char const* argv[])
   init_ADC();
   init_USART();
 
-  USBD_Init(&USB_Device_dev, &USR_desc, &USBD_HID_cb, &USR_cb);
+  /* USBD_Init(&USB_Device_dev, &USR_desc, &USBD_HID_cb, &USR_cb); */
   init_ADC();
+  init_USART();
   while(1) {
     if (sample_value[ADC_R_Y] > 0x90){
       STM_EVAL_LEDOn(LED3);
@@ -67,19 +71,27 @@ int main(int argc, char const* argv[])
       STM_EVAL_LEDOff(LED4);
     }
 
-    if ((PrevXferDone) && (USB_Device_dev.dev.device_status == USB_CONFIGURED)) {
-      Send_Buffer[0] = sample_value[0];
-      Send_Buffer[1] = sample_value[1];
-      Send_Buffer[2] = sample_value[2];
-      Send_Buffer[3] = sample_value[3];
+    /* if ((PrevXferDone) && (USB_Device_dev.dev.device_status == USB_CONFIGURED)) { */
+    /*   Send_Buffer[0] = sample_value[0]; */
+    /*   Send_Buffer[1] = sample_value[1]; */
+    /*   Send_Buffer[2] = sample_value[2]; */
+    /*   Send_Buffer[3] = sample_value[3]; */
+    
+    /*   Send_Buffer[USB_BUFFER - 1] = 0x00; */
+    
+    /*   USBD_HID_SendReport(&USB_Device_dev, Send_Buffer, USB_BUFFER); */
+    /*   PrevXferDone = 0; */
+    /* } */
 
-      Send_Buffer[USB_BUFFER - 1] = 0x00;
+    if (sample_value[ADC_R_X] <= 0x40)
+      sample_value[ADC_R_X] = 0;
 
-      USBD_HID_SendReport(&USB_Device_dev, Send_Buffer, USB_BUFFER);
-      PrevXferDone = 0;
-    }
+    values[2] = (float)sample_value[ADC_R_X] / 1.5;
 
-    /* USART_Write((uint8_t*)sample_value, 2); */
+    USART_Write(&ind, 1);
+    USART_Write((uint8_t*)values, 16);
+    USART_Write(&ind, 1);
+    USART_Write(&end, 1);
     Delay(100);
   }
 
