@@ -24,6 +24,7 @@ void USART_Write(uint8_t* data, uint8_t size);
 void Delay(__IO uint32_t);
 
 int main(int argc, char const* argv[]) {
+  uint8_t buttons = 0x00;
   // Initialize SysTick
   RCC_ClocksTypeDef RCC_Clocks;
   RCC_GetClocksFreq(&RCC_Clocks);
@@ -49,15 +50,29 @@ int main(int argc, char const* argv[]) {
     } else {
       STM_EVAL_LEDOff(LED5);
     }
-    if (sample_value[ADC_L_Y] > 0x400) {
+    /* if (sample_value[ADC_L_Y] > 0x400) { */
+    /*   STM_EVAL_LEDOn(LED6); */
+    /* } else { */
+    /*   STM_EVAL_LEDOff(LED6); */
+    /* } */
+    /* if (sample_value[ADC_L_X] > 0x400) { */
+    /*   STM_EVAL_LEDOn(LED4); */
+    /* } else { */
+    /*   STM_EVAL_LEDOff(LED4); */
+    /* } */
+    if (GPIO_ReadInputDataBit(GPIOC, GPIO_Pin_4) == Bit_SET) {
       STM_EVAL_LEDOn(LED6);
+      buttons &= ~0x02;
     } else {
       STM_EVAL_LEDOff(LED6);
+      buttons |= 0x02;
     }
-    if (sample_value[ADC_L_X] > 0x400) {
+    if (GPIO_ReadInputDataBit(GPIOC, GPIO_Pin_5) == Bit_SET) {
       STM_EVAL_LEDOn(LED4);
+      buttons &= ~0x01;
     } else {
       STM_EVAL_LEDOff(LED4);
+      buttons |= 0x01;
     }
 
     if ((PrevXferDone) && (USB_Device_dev.dev.device_status == USB_CONFIGURED)) {
@@ -66,7 +81,7 @@ int main(int argc, char const* argv[]) {
       Send_Buffer[2] = sample_value[2] >> 4;
       Send_Buffer[3] = sample_value[3] >> 4;
 
-      Send_Buffer[USB_BUFFER - 1] = 0x00;
+      Send_Buffer[USB_BUFFER - 1] = buttons;
 
       USBD_HID_SendReport(&USB_Device_dev, Send_Buffer, USB_BUFFER);
       PrevXferDone = 0;
@@ -85,11 +100,13 @@ void init_ADC() {
   RCC_APB2PeriphClockCmd(RCC_APB2Periph_ADC1, ENABLE);
   RCC_AHBPeriphClockCmd(RCC_AHBPeriph_GPIOA, ENABLE);
 
+  /* Setup GPIO pins for analog use */
   GPIO_InitStructure.GPIO_Pin = GPIO_Pin_4 | GPIO_Pin_5 | GPIO_Pin_1 | GPIO_Pin_0;
   GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AN;
   GPIO_InitStructure.GPIO_PuPd = GPIO_PuPd_NOPULL;
   GPIO_Init(GPIOA, &GPIO_InitStructure);
 
+  /* Configure ADC */
   ADC_StructInit(&ADC_InitStructure);
   ADC_InitStructure.ADC_Resolution = ADC_Resolution_12b;
   ADC_InitStructure.ADC_ContinuousConvMode = ENABLE;
@@ -98,6 +115,7 @@ void init_ADC() {
   ADC_InitStructure.ADC_ExternalTrigConv = ADC_ExternalTrigConv_T1_TRGO;
   ADC_Init(ADC1, &ADC_InitStructure);
 
+  /* Enable ADC channels for appropriate pins */
   ADC_ChannelConfig(ADC1, ADC_Channel_4, ADC_SampleTime_239_5Cycles);
   ADC_ChannelConfig(ADC1, ADC_Channel_5, ADC_SampleTime_239_5Cycles);
   ADC_ChannelConfig(ADC1, ADC_Channel_1, ADC_SampleTime_239_5Cycles);
@@ -109,6 +127,7 @@ void init_ADC() {
 
   RCC_AHBPeriphClockCmd(RCC_AHBPeriph_DMA1, ENABLE);
 
+  /* Configure DMA */
   DMA_InitStructure.DMA_PeripheralBaseAddr = (uint32_t)&ADC1->DR;
   DMA_InitStructure.DMA_MemoryBaseAddr = (uint32_t)&sample_value[0];
   DMA_InitStructure.DMA_DIR = DMA_DIR_PeripheralSRC;
@@ -129,5 +148,14 @@ void init_ADC() {
 
   while (!ADC_GetFlagStatus(ADC1, ADC_FLAG_ADRDY));
   ADC_StartOfConversion(ADC1);
+
+  RCC_AHBPeriphClockCmd(RCC_AHBPeriph_GPIOC, ENABLE);
+  GPIO_StructInit(&GPIO_InitStructure);
+  GPIO_InitStructure.GPIO_Pin = GPIO_Pin_4 | GPIO_Pin_5;
+  GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IN;
+  GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
+  GPIO_InitStructure.GPIO_OType = GPIO_OType_PP;
+  GPIO_InitStructure.GPIO_PuPd = GPIO_PuPd_DOWN;
+  GPIO_Init(GPIOC, &GPIO_InitStructure);
 }
 
