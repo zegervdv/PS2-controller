@@ -40,26 +40,6 @@ int main(int argc, char const* argv[]) {
     while((DMA_GetFlagStatus(DMA1_FLAG_TC1)) == RESET);
     DMA_ClearFlag(DMA1_FLAG_TC1);
 
-    if (sample_value[ADC_R_Y] > 0x400) {
-      STM_EVAL_LEDOn(LED3);
-    } else {
-      STM_EVAL_LEDOff(LED3);
-    }
-    if (sample_value[ADC_R_X] > 0x400) {
-      STM_EVAL_LEDOn(LED5);
-    } else {
-      STM_EVAL_LEDOff(LED5);
-    }
-    /* if (sample_value[ADC_L_Y] > 0x400) { */
-    /*   STM_EVAL_LEDOn(LED6); */
-    /* } else { */
-    /*   STM_EVAL_LEDOff(LED6); */
-    /* } */
-    /* if (sample_value[ADC_L_X] > 0x400) { */
-    /*   STM_EVAL_LEDOn(LED4); */
-    /* } else { */
-    /*   STM_EVAL_LEDOff(LED4); */
-    /* } */
     if (GPIO_ReadInputDataBit(GPIOC, GPIO_Pin_4) == Bit_SET) {
       STM_EVAL_LEDOn(LED6);
       buttons &= ~0x02;
@@ -76,10 +56,10 @@ int main(int argc, char const* argv[]) {
     }
 
     if ((PrevXferDone) && (USB_Device_dev.dev.device_status == USB_CONFIGURED)) {
-      Send_Buffer[0] = sample_value[0] >> 4;
-      Send_Buffer[1] = sample_value[1] >> 4;
-      Send_Buffer[2] = sample_value[2] >> 4;
-      Send_Buffer[3] = sample_value[3] >> 4;
+      Send_Buffer[0] = (sample_value[0] & 0x0FFF) >> 4;
+      Send_Buffer[1] = (sample_value[1] & 0x0FFF) >> 4;
+      Send_Buffer[2] = (sample_value[2] & 0x0FFF) >> 4;
+      Send_Buffer[3] = (sample_value[3] & 0x0FFF) >> 4;
 
       Send_Buffer[USB_BUFFER - 1] = buttons;
 
@@ -149,6 +129,7 @@ void init_ADC() {
   while (!ADC_GetFlagStatus(ADC1, ADC_FLAG_ADRDY));
   ADC_StartOfConversion(ADC1);
 
+  /* Enable GPIO for push buttons */
   RCC_AHBPeriphClockCmd(RCC_AHBPeriph_GPIOC, ENABLE);
   GPIO_StructInit(&GPIO_InitStructure);
   GPIO_InitStructure.GPIO_Pin = GPIO_Pin_4 | GPIO_Pin_5;
