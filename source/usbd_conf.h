@@ -16,8 +16,8 @@
   *
   *        http://www.st.com/software_license_agreement_liberty_v2
   *
-  * Unless required by applicable law or agreed to in writing, software 
-  * distributed under the License is distributed on an "AS IS" BASIS, 
+  * Unless required by applicable law or agreed to in writing, software
+  * distributed under the License is distributed on an "AS IS" BASIS,
   * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
   * See the License for the specific language governing permissions and
   * limitations under the License.
@@ -34,26 +34,26 @@
 
 /** @defgroup USB_CONF_Exported_Defines
   * @{
-  */ 
+  */
 
 
 #define USBD_CFG_MAX_NUM           1
 #define USBD_ITF_MAX_NUM           1
-#define USB_MAX_STR_DESC_SIZ       64 
-#define USBD_SELF_POWERED               
-#define USBD_DYNAMIC_DESCRIPTOR_CHANGE_ENABLED 
+#define USB_MAX_STR_DESC_SIZ       64
+#define USBD_SELF_POWERED
+#define USBD_DYNAMIC_DESCRIPTOR_CHANGE_ENABLED
 
 #define CUSTOMHID_SIZ_REPORT_DESC               163
 #define CUSTOMHID_SIZ_CONFIG_DESC               41
 
 /** @defgroup USB_String_Descriptors
   * @{
-  */ 
+  */
 
 
 /** @defgroup USB_HID_Class_Layer_Parameter
   * @{
-  */ 
+  */
 #define HID_IN_EP                    0x81
 #define HID_OUT_EP                   0x01
 
@@ -62,35 +62,35 @@
 
 /**
   * @}
-  */ 
+  */
 /** @defgroup USB_CONF_Exported_Types
   * @{
-  */ 
+  */
 /**
   * @}
-  */ 
+  */
 
 
 /** @defgroup USB_CONF_Exported_Macros
   * @{
-  */ 
+  */
 /**
   * @}
-  */ 
+  */
 
 /** @defgroup USB_CONF_Exported_Variables
   * @{
-  */ 
+  */
 /**
   * @}
-  */ 
+  */
 
 /** @defgroup USB_CONF_Exported_FunctionsPrototype
   * @{
-  */ 
+  */
 /**
   * @}
-  */ 
+  */
 
 
 #endif /* __USBD_CONF__H__ */
@@ -100,5 +100,5 @@
 
 /**
 * @}
-*/ 
+*/
 

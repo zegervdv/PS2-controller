@@ -99,3 +99,7 @@ clean:
 # Flash the STM32F4
 burn: proj
 	st-flash write $(PROJ_NAME).bin 0x8000000
+
+debug:
+	st-util &>/dev/null &
+	arm-none-eabi-gdb -tui $(PROJ_NAME).elf

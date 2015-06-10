@@ -16,14 +16,14 @@
   *
   *        http://www.st.com/software_license_agreement_liberty_v2
   *
-  * Unless required by applicable law or agreed to in writing, software 
-  * distributed under the License is distributed on an "AS IS" BASIS, 
+  * Unless required by applicable law or agreed to in writing, software
+  * distributed under the License is distributed on an "AS IS" BASIS,
   * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
   * See the License for the specific language governing permissions and
   * limitations under the License.
   *
   ******************************************************************************
-  */ 
+  */
 /* Define to prevent recursive inclusion -------------------------------------*/
 #ifndef __USB_HID_CORE_H_
 #define __USB_HID_CORE_H_
@@ -54,11 +54,11 @@
 /* Exported variables --------------------------------------------------------*/
 extern USBD_Class_cb_TypeDef  USBD_HID_cb;
 
-/* Exported functions ------------------------------------------------------- */ 
- 
-uint8_t USBD_HID_SendReport (USB_CORE_HANDLE  *pdev, 
-                                 uint8_t *report,
-                                 uint16_t len);
+/* Exported functions ------------------------------------------------------- */
+
+uint8_t USBD_HID_SendReport(USB_CORE_HANDLE*  pdev,
+                            uint8_t* report,
+                            uint16_t len);
 
 #endif  /* __USB_HID_CORE_H_ */
 

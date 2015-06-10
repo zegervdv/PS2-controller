@@ -16,8 +16,8 @@
   *
   *        http://www.st.com/software_license_agreement_liberty_v2
   *
-  * Unless required by applicable law or agreed to in writing, software 
-  * distributed under the License is distributed on an "AS IS" BASIS, 
+  * Unless required by applicable law or agreed to in writing, software
+  * distributed under the License is distributed on an "AS IS" BASIS,
   * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
   * See the License for the specific language governing permissions and
   * limitations under the License.
@@ -37,15 +37,15 @@
 /** @addtogroup USB_DEVICE_DRIVER
   * @{
   */
-  
+
 /** @defgroup USB_CONF
   * @brief USB low level driver configuration file
   * @{
-  */ 
+  */
 
 /** @defgroup USB_CONF_Exported_Defines
   * @{
-  */ 
+  */
 
 
 /* Define if Low power mode is enabled; it allows entering the device into STOP mode
@@ -74,37 +74,37 @@
 
 /**
   * @}
-  */ 
+  */
 
 
 /** @defgroup USB_CONF_Exported_Types
   * @{
-  */ 
+  */
 /**
   * @}
-  */ 
+  */
 
 
 /** @defgroup USB_CONF_Exported_Macros
   * @{
-  */ 
+  */
 /**
   * @}
-  */ 
+  */
 
 /** @defgroup USB_CONF_Exported_Variables
   * @{
-  */ 
+  */
 /**
   * @}
-  */ 
+  */
 
 /** @defgroup USB_CONF_Exported_FunctionsPrototype
   * @{
-  */ 
+  */
 /**
   * @}
-  */ 
+  */
 
 
 #endif /* __USB_CONF__H__ */
@@ -112,11 +112,11 @@
 
 /**
 * @}
-*/ 
+*/
 
 /**
 * @}
-*/ 
+*/
 
 /**
 * @}

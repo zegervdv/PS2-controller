@@ -16,14 +16,14 @@
   *
   *        http://www.st.com/software_license_agreement_liberty_v2
   *
-  * Unless required by applicable law or agreed to in writing, software 
-  * distributed under the License is distributed on an "AS IS" BASIS, 
+  * Unless required by applicable law or agreed to in writing, software
+  * distributed under the License is distributed on an "AS IS" BASIS,
   * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
   * See the License for the specific language governing permissions and
   * limitations under the License.
   *
   ******************************************************************************
-  */ 
+  */
 
 /* Define to prevent recursive inclusion -------------------------------------*/
 
@@ -37,11 +37,11 @@
 /** @addtogroup STM32_USB_DEVICE_LIBRARY
   * @{
   */
-  
+
 /** @defgroup USB_DESC
   * @brief general defines for the usb device library file
   * @{
-  */ 
+  */
 
 /** @defgroup USB_DESC_Exported_Defines
   * @{
@@ -56,7 +56,7 @@
 #define USB_SIZ_STRING_SERIAL                   26
 /**
   * @}
-  */ 
+  */
 
 
 /** @defgroup USBD_DESC_Exported_TypesDefinitions
@@ -64,7 +64,7 @@
   */
 /**
   * @}
-  */ 
+  */
 
 #define         Device1_Identifier          (0x1FFFF7AC)
 #define         Device2_Identifier          (0x1FFFF7B0)
@@ -72,52 +72,52 @@
 
 /** @defgroup USBD_DESC_Exported_Macros
   * @{
-  */ 
+  */
 /**
   * @}
-  */ 
+  */
 
 /** @defgroup USBD_DESC_Exported_Variables
   * @{
-  */ 
+  */
 
 extern  uint8_t USBD_StrDesc[USB_MAX_STR_DESC_SIZ];
-extern  uint8_t USBD_OtherSpeedCfgDesc[USB_LEN_CFG_DESC]; 
-extern  USBD_DEVICE USR_desc; 
+extern  uint8_t USBD_OtherSpeedCfgDesc[USB_LEN_CFG_DESC];
+extern  USBD_DEVICE USR_desc;
 extern  uint8_t USBD_StringSerial[USB_SIZ_STRING_SERIAL];
 void Get_SerialNum(void);
 /**
   * @}
-  */ 
+  */
 
 /** @defgroup USBD_DESC_Exported_FunctionsPrototype
   * @{
-  */ 
+  */
 
 
-uint8_t *     USBD_USR_DeviceDescriptor( uint8_t speed , uint16_t *length);
-uint8_t *     USBD_USR_LangIDStrDescriptor( uint8_t speed , uint16_t *length);
-uint8_t *     USBD_USR_ManufacturerStrDescriptor ( uint8_t speed , uint16_t *length);
-uint8_t *     USBD_USR_ProductStrDescriptor ( uint8_t speed , uint16_t *length);
-uint8_t *     USBD_USR_SerialStrDescriptor( uint8_t speed , uint16_t *length);
-uint8_t *     USBD_USR_ConfigStrDescriptor( uint8_t speed , uint16_t *length);
-uint8_t *     USBD_USR_InterfaceStrDescriptor( uint8_t speed , uint16_t *length);
+uint8_t*      USBD_USR_DeviceDescriptor(uint8_t speed , uint16_t* length);
+uint8_t*      USBD_USR_LangIDStrDescriptor(uint8_t speed , uint16_t* length);
+uint8_t*      USBD_USR_ManufacturerStrDescriptor(uint8_t speed , uint16_t* length);
+uint8_t*      USBD_USR_ProductStrDescriptor(uint8_t speed , uint16_t* length);
+uint8_t*      USBD_USR_SerialStrDescriptor(uint8_t speed , uint16_t* length);
+uint8_t*      USBD_USR_ConfigStrDescriptor(uint8_t speed , uint16_t* length);
+uint8_t*      USBD_USR_InterfaceStrDescriptor(uint8_t speed , uint16_t* length);
 
 #ifdef USB_SUPPORT_USER_STRING_DESC
-uint8_t *     USBD_USR_USRStringDesc (uint8_t speed, uint8_t idx , uint16_t *length);  
-#endif /* USB_SUPPORT_USER_STRING_DESC */  
-  
+uint8_t*      USBD_USR_USRStringDesc(uint8_t speed, uint8_t idx , uint16_t* length);
+#endif /* USB_SUPPORT_USER_STRING_DESC */
+
 /**
   * @}
-  */ 
+  */
 
 #endif /* __USBD_DESC_H */
 
 /**
   * @}
-  */ 
+  */
 
 /**
 * @}
-*/ 
+*/
 /************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/
