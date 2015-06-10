@@ -12,7 +12,7 @@
 #define ADC_L_X  (3) //PA5
 #define USB_BUFFER (int)(5)
 
-volatile uint8_t sample_value[4] = {0};
+__IO  uint8_t sample_value[4] = {0};
 
 uint8_t Send_Buffer[USB_BUFFER];
 uint8_t PrevXferDone = 1;
@@ -36,8 +36,8 @@ int main(int argc, char const* argv[]) {
   USBD_Init(&USB_Device_dev, &USR_desc, &USBD_HID_cb, &USR_cb);
   init_ADC();
   while (1) {
-    // Send out test values
-    sample_value[ADC_R_X] = (uint8_t)ADC_GetConversionValue(ADC1);
+    while((DMA_GetFlagStatus(DMA1_FLAG_TC1)) == RESET);
+    DMA_ClearFlag(DMA1_FLAG_TC1);
 
     if (sample_value[ADC_R_Y] > 0x90) {
       STM_EVAL_LEDOn(LED3);
@@ -80,6 +80,7 @@ int main(int argc, char const* argv[]) {
 void init_ADC() {
   GPIO_InitTypeDef GPIO_InitStructure;
   ADC_InitTypeDef ADC_InitStructure;
+  DMA_InitTypeDef DMA_InitStructure;
 
   RCC_APB2PeriphClockCmd(RCC_APB2Periph_ADC1, ENABLE);
   RCC_AHBPeriphClockCmd(RCC_AHBPeriph_GPIOA, ENABLE);
@@ -94,13 +95,36 @@ void init_ADC() {
   ADC_InitStructure.ADC_ContinuousConvMode = ENABLE;
   ADC_InitStructure.ADC_ScanDirection = ADC_ScanDirection_Upward;
   ADC_InitStructure.ADC_ExternalTrigConvEdge = ADC_ExternalTrigConvEdge_None;
+  ADC_InitStructure.ADC_ExternalTrigConv = ADC_ExternalTrigConv_T1_TRGO;
   ADC_Init(ADC1, &ADC_InitStructure);
 
   ADC_ChannelConfig(ADC1, ADC_Channel_4, ADC_SampleTime_7_5Cycles);
+  /* ADC_ChannelConfig(ADC1, ADC_Channel_5, ADC_SampleTime_7_5Cycles); */
+
+  ADC_GetCalibrationFactor(ADC1);
+
+  ADC_DMARequestModeConfig(ADC1, ADC_DMAMode_Circular);
   ADC_Cmd(ADC1, ENABLE);
+  ADC_DMACmd(ADC1, ENABLE);
 
   while (!ADC_GetFlagStatus(ADC1, ADC_FLAG_ADRDY));
   ADC_StartOfConversion(ADC1);
+
+  RCC_AHBPeriphClockCmd(RCC_AHBPeriph_DMA1, ENABLE);
+
+  DMA_InitStructure.DMA_PeripheralBaseAddr = (uint32_t)&ADC1->DR;
+  DMA_InitStructure.DMA_MemoryBaseAddr = (uint32_t)sample_value;
+  DMA_InitStructure.DMA_DIR = DMA_DIR_PeripheralSRC;
+  DMA_InitStructure.DMA_BufferSize = 1;
+  DMA_InitStructure.DMA_PeripheralInc = DMA_PeripheralInc_Disable;
+  DMA_InitStructure.DMA_MemoryInc = DMA_MemoryInc_Disable;
+  DMA_InitStructure.DMA_PeripheralDataSize = DMA_PeripheralDataSize_Byte;
+  DMA_InitStructure.DMA_MemoryDataSize = DMA_MemoryDataSize_Byte;
+  DMA_InitStructure.DMA_Mode = DMA_Mode_Circular;
+  DMA_InitStructure.DMA_Priority = DMA_Priority_High;
+  DMA_InitStructure.DMA_M2M = DMA_M2M_Disable;
+  DMA_Init(DMA1_Channel1, &DMA_InitStructure);
+  DMA_Cmd(DMA1_Channel1, ENABLE);
 
 }
 
