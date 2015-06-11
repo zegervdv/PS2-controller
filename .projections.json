@@ -1,0 +1,7 @@
+{
+  "source/*.c": {"type": "source", "make": "make -wC source"},
+  "source/*.h": {"type": "header", "make": "make -wC source"},
+  "source/Makefile": {"type": "makefile"},
+  "python/*.py": {"type": "python"},
+  "README.md": {"type": "readme"}
+}
