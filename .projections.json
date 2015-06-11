@@ -3,5 +3,7 @@
   "source/*.h": {"type": "header", "make": "make -wC source"},
   "source/Makefile": {"type": "makefile"},
   "python/*.py": {"type": "python"},
-  "README.md": {"type": "readme"}
+  "README.md": {"type": "readme"},
+  "host/*.c": {"type": "host", "make": "make -wC host"},
+  "host/*.h": {"type": "host", "make": "make -wC host"}
 }

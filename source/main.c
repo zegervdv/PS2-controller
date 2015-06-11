@@ -66,7 +66,7 @@ int main(int argc, char const* argv[]) {
       USBD_HID_SendReport(&USB_Device_dev, Send_Buffer, USB_BUFFER);
       PrevXferDone = 0;
     }
-    Delay(100);
+    Delay(50);
   }
 
   return 0;

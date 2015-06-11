@@ -8,3 +8,4 @@ for line in datafile:
     for i in range(len(line)/2):
         char = "%s%s" % (line[2*i],line[2*i+1])
         s.write(char.decode('hex'))
+        time.sleep(.05)
