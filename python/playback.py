@@ -1,4 +1,4 @@
-import serial
+import serial, time
 
 s = serial.Serial('/dev/tty.usbserial-AH02E64C')
 s.baudrate = 115200
