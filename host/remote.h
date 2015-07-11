@@ -1,4 +1,5 @@
 #include <hidapi/hidapi.h>
+#include <math.h>
 #ifndef REMOTE_H
 #define REMOTE_H
 
@@ -21,9 +22,28 @@ typedef struct {
   unsigned char LX;
   unsigned char buttons;
 } remote_hid_t;
-#endif
+
+/**
+ * controls format
+ */
+typedef struct {
+  unsigned char indicator;
+  float roll;
+  float pitch;
+  float throttle;
+  float yaw;
+  unsigned char crc;
+  unsigned char end;
+} control_t;
 
 /**
  * Print data from remote to console
  */
 void print_remote_data(remote_hid_t* data);
+
+/**
+ * Convert read data from HID to controls format
+ */
+void convert_data(remote_hid_t* input, control_t* output);
+
+#endif
